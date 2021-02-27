@@ -1,0 +1,36 @@
+version: '3'
+services:
+  id-service:
+    image: "jboss/keycloak:11.0.3"
+    networks:
+      internal:
+    extra_hosts:
+      id.davidphu.com: 172.18.0.1
+      id.tenant1.com: 172.18.0.1
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./realms:/tmp/realms
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=h2
+      - KEYCLOAK_IMPORT=/tmp/realms/main_realm.json
+  tenant1-idp:
+    image: "jboss/keycloak:11.0.3"
+    networks:
+      internal:
+    extra_hosts:
+      id.davidphu.com: 172.18.0.1
+      id.tenant1.com: 172.18.0.1
+    ports:
+      - "8280:8080"
+    volumes:
+      - ./realms:/tmp/realms
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=h2
+      - KEYCLOAK_IMPORT=/tmp/realms/tenant1_realm.json
+networks:
+  internal:
