@@ -1,17 +1,16 @@
-package com.czetsuyatech.config;
+package com.davidphu.config;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.davidphu.util.UriTenantResolver;
 import org.keycloak.adapters.AdapterDeploymentContext;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-/**
- * @author Edward P. Legaspi | czetsuya@gmail.com
- */
 public class MultitenantKeycloakAuthenticationEntryPoint extends KeycloakAuthenticationEntryPoint {
 
     public MultitenantKeycloakAuthenticationEntryPoint(AdapterDeploymentContext adapterDeploymentContext) {
@@ -24,19 +23,22 @@ public class MultitenantKeycloakAuthenticationEntryPoint extends KeycloakAuthent
 
     @Override
     protected void commenceLoginRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        String path = request.getRequestURI();
-        int multitenantIndex = path.indexOf("tenant/");
-        if (multitenantIndex == -1) {
-            throw new IllegalStateException("Not able to resolve realm from the request path!");
+        String path = request.getRequestURL().toString();
+        String tenantId = null;
+        try {
+            UriTenantResolver uriTenantResolver = new UriTenantResolver(path);
+            tenantId = uriTenantResolver.getTenantId();
+        }
+        catch (URISyntaxException ex) {
+            System.out.println("Invalid URI path: " + path);
+            ex.printStackTrace();
         }
 
-        String realm = path.substring(path.indexOf("tenant/")).split("/")[1];
-        if (realm.contains("?")) {
-            realm = realm.split("\\?")[0];
+        if (tenantId == null || tenantId.isBlank()) {
+            throw new IllegalStateException("Not able to resolve tenant id from the request path!");
         }
 
-        String contextAwareLoginUri = request.getContextPath() + "/tenant/" + realm + DEFAULT_LOGIN_URI;
+        String contextAwareLoginUri = request.getContextPath() + "/tenant/" + tenantId + DEFAULT_LOGIN_URI;
         response.sendRedirect(contextAwareLoginUri);
     }
 }

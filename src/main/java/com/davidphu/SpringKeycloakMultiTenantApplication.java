@@ -1,4 +1,4 @@
-package com.czetsuyatech;
+package com.davidphu;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.springframework.boot.SpringApplication;
@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
-import com.czetsuyatech.config.PathBasedConfigResolver;
+import com.davidphu.config.PathBasedConfigResolver;
 
 @SpringBootApplication
 public class SpringKeycloakMultiTenantApplication {

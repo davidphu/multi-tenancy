@@ -1,4 +1,4 @@
-package com.czetsuyatech.config;
+package com.davidphu.config;
 
 import java.util.Arrays;
 
@@ -37,9 +37,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-/**
- * @author Edward P. Legaspi | czetsuya@gmail.com
- */
 public class SpringKeycloakSecurityConfiguration {
 
     @DependsOn("keycloakConfigResolver")
@@ -178,7 +175,8 @@ public class SpringKeycloakSecurityConfiguration {
                     .and().authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
 
                     .antMatchers("/logout", "/", "/unsecured").permitAll() //
-                    .antMatchers("/**/catalog").authenticated() //
+                    .antMatchers("/catalog").authenticated() //
+                    .antMatchers("/users/self").authenticated() //
                     // .antMatchers("/**/catalog").hasRole("CATALOG_MANAGER") //
 
                     .anyRequest().denyAll();

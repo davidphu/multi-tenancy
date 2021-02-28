@@ -1,6 +1,7 @@
 version: '3'
 services:
   app-idp:
+    container_name: app-idp
     image: "jboss/keycloak:11.0.3"
     extra_hosts:
       - "id.davidphu.com:$DOCKERHOST"

@@ -1,0 +1,29 @@
+{
+  "realm" : "tenant2",
+  "users" : [ {
+    "id" : "f2f50824-af80-4ed4-849b-fcfeb679654e",
+    "createdTimestamp" : 1614523306539,
+    "username" : "tenant2-user1",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "User1",
+    "lastName" : "Tenant2",
+    "email" : "user1@tenant2.com",
+    "credentials" : [ {
+      "id" : "a932381e-aa94-47c0-ade2-024bf27f3aba",
+      "type" : "password",
+      "createdDate" : 1614523319203,
+      "secretData" : "{\"value\":\"ZYdp+vkeKRvA1PGV90czx1IC/GzqSoQon+fxheuRHvhWlFgEdvGBDOJLOYRccWQE2nIuUxV00wyf/5NnCOS+Ng==\",\"salt\":\"e6mer5edJ6Md17KRBh4YQQ==\"}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

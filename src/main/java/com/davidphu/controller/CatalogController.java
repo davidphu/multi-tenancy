@@ -1,4 +1,4 @@
-package com.czetsuyatech.controller;
+package com.davidphu.controller;
 
 import java.security.Principal;
 
@@ -11,19 +11,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * @author Edward P. Legaspi | czetsuya@gmail.com
- */
 @RestController
 public class CatalogController {
 
-    @GetMapping("/tenant/branch1/catalog")
+    @GetMapping("/catalog")
     public String listCatalogBranch1() {
-        return getUserInfo();
-    }
-
-    @GetMapping("/tenant/branch2/catalog")
-    public String listCatalogBranch2() {
         return getUserInfo();
     }
 

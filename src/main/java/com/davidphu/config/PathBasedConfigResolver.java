@@ -1,17 +1,16 @@
-package com.czetsuyatech.config;
+package com.davidphu.config;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.davidphu.util.UriTenantResolver;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
 import org.keycloak.adapters.OIDCHttpFacade;
 import org.keycloak.representations.adapters.config.AdapterConfig;
 
-/**
- * @author Edward P. Legaspi | czetsuya@gmail.com
- */
 public class PathBasedConfigResolver implements KeycloakConfigResolver {
 
     private final ConcurrentHashMap<String, KeycloakDeployment> cache = new ConcurrentHashMap<>();
@@ -21,25 +20,27 @@ public class PathBasedConfigResolver implements KeycloakConfigResolver {
 
     @Override
     public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
-
         String path = request.getURI();
-        int multitenantIndex = path.indexOf("tenant/");
-
-        if (multitenantIndex == -1) {
-            throw new IllegalStateException("Not able to resolve realm from the request path!");
+        String tenantId = null;
+        try {
+            UriTenantResolver uriTenantResolver = new UriTenantResolver(path);
+            tenantId = uriTenantResolver.getTenantId();
+        }
+        catch (URISyntaxException ex) {
+            System.out.println("Invalid URI path: " + path);
+            ex.printStackTrace();
         }
 
-        String realm = path.substring(path.indexOf("tenant/")).split("/")[1];
-        if (realm.contains("?")) {
-            realm = realm.split("\\?")[0];
+        if (tenantId == null || tenantId.isBlank()) {
+            throw new IllegalStateException("Not able to resolve tenant id from the request path!");
         }
 
-        if (!cache.containsKey(realm)) {
-            InputStream is = getClass().getResourceAsStream("/" + realm + "-keycloak.json");
-            cache.put(realm, KeycloakDeploymentBuilder.build(is));
+        if (!cache.containsKey(tenantId)) {
+            InputStream is = getClass().getResourceAsStream("/" + tenantId + "-keycloak.json");
+            cache.put(tenantId, KeycloakDeploymentBuilder.build(is));
         }
 
-        return cache.get(realm);
+        return cache.get(tenantId);
     }
 
     static void setAdapterConfig(AdapterConfig adapterConfig) {
