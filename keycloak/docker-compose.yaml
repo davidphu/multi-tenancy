@@ -1,12 +1,16 @@
 version: '3'
 services:
-  id-service:
+  app-idp:
     image: "jboss/keycloak:11.0.3"
     networks:
-      internal:
+      - internal
     extra_hosts:
-      id.davidphu.com: 172.18.0.1
-      id.tenant1.com: 172.18.0.1
+      - "id.davidphu.com:$DOCKERHOST"
+      - "id.tenant1.com:$DOCKERHOST"
+      - "id.tenant2.com:$DOCKERHOST"
+    links:
+      - "tenant1-idp:id.tenant1.com"
+      - "tenant2-idp:id.tenant2.com"
     ports:
       - "8180:8080"
     volumes:
@@ -19,10 +23,11 @@ services:
   tenant1-idp:
     image: "jboss/keycloak:11.0.3"
     networks:
-      internal:
+      - internal
     extra_hosts:
-      id.davidphu.com: 172.18.0.1
-      id.tenant1.com: 172.18.0.1
+      - "id.davidphu.com:$DOCKERHOST"
+      - "id.tenant1.com:$DOCKERHOST"
+      - "id.tenant2.com:$DOCKERHOST"
     ports:
       - "8280:8080"
     volumes:
@@ -32,5 +37,22 @@ services:
       - KEYCLOAK_PASSWORD=admin
       - DB_VENDOR=h2
       - KEYCLOAK_IMPORT=/tmp/realms/tenant1_realm.json
+  tenant2-idp:
+    image: "jboss/keycloak:11.0.3"
+    networks:
+      - internal
+    extra_hosts:
+      - "id.davidphu.com:$DOCKERHOST"
+      - "id.tenant1.com:$DOCKERHOST"
+      - "id.tenant2.com:$DOCKERHOST"
+    ports:
+      - "8380:8080"
+    volumes:
+      - ./realms:/tmp/realms
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=h2
+      - KEYCLOAK_IMPORT=/tmp/realms/tenant2_realm.json
 networks:
   internal:
