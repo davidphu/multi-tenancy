@@ -2,57 +2,22 @@ version: '3'
 services:
   app-idp:
     image: "jboss/keycloak:11.0.3"
-    networks:
-      - internal
     extra_hosts:
       - "id.davidphu.com:$DOCKERHOST"
-      - "id.tenant1.com:$DOCKERHOST"
-      - "id.tenant2.com:$DOCKERHOST"
-    links:
-      - "tenant1-idp:id.tenant1.com"
-      - "tenant2-idp:id.tenant2.com"
     ports:
       - "8180:8080"
     volumes:
       - ./realms:/tmp/realms
+      - .:/tmp
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
       - DB_VENDOR=h2
-      - KEYCLOAK_IMPORT=/tmp/realms/main_realm.json
-  tenant1-idp:
-    image: "jboss/keycloak:11.0.3"
-    networks:
-      - internal
-    extra_hosts:
-      - "id.davidphu.com:$DOCKERHOST"
-      - "id.tenant1.com:$DOCKERHOST"
-      - "id.tenant2.com:$DOCKERHOST"
-    ports:
-      - "8280:8080"
-    volumes:
-      - ./realms:/tmp/realms
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - DB_VENDOR=h2
-      - KEYCLOAK_IMPORT=/tmp/realms/tenant1_realm.json
-  tenant2-idp:
-    image: "jboss/keycloak:11.0.3"
-    networks:
-      - internal
-    extra_hosts:
-      - "id.davidphu.com:$DOCKERHOST"
-      - "id.tenant1.com:$DOCKERHOST"
-      - "id.tenant2.com:$DOCKERHOST"
-    ports:
-      - "8380:8080"
-    volumes:
-      - ./realms:/tmp/realms
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - DB_VENDOR=h2
-      - KEYCLOAK_IMPORT=/tmp/realms/tenant2_realm.json
-networks:
-  internal:
+      #- KEYCLOAK_IMPORT=/tmp/realms/main_realm.json
+    command:
+      - "-b 0.0.0.0"
+      - "-Dkeycloak.migration.action=import"
+      - "-Dkeycloak.migration.provider=dir"
+      - "-Dkeycloak.profile.feature.upload_scripts=enabled"
+      - "-Dkeycloak.migration.dir=/tmp/realms"
+      - "-Dkeycloak.migration.strategy=IGNORE_EXISTING"

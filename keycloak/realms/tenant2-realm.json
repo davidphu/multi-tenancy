@@ -1,6 +1,6 @@
 {
-  "id": "branch2",
-  "realm": "branch2",
+  "id": "tenant2",
+  "realm": "tenant2",
   "notBefore": 1608806497,
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -48,7 +48,7 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "branch2",
+        "containerId": "tenant2",
         "attributes": {}
       },
       {
@@ -57,7 +57,7 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "branch2",
+        "containerId": "tenant2",
         "attributes": {}
       }
     ],
@@ -427,7 +427,7 @@
       "clientId": "account",
       "name": "${client_account}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/branch2/account/",
+      "baseUrl": "/realms/tenant2/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
@@ -438,7 +438,7 @@
         "manage-account"
       ],
       "redirectUris": [
-        "/realms/branch2/account/*"
+        "/realms/tenant2/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -474,14 +474,14 @@
       "clientId": "account-console",
       "name": "${client_account-console}",
       "rootUrl": "${authBaseUrl}",
-      "baseUrl": "/realms/branch2/account/",
+      "baseUrl": "/realms/tenant2/account/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "/realms/branch2/account/*"
+        "/realms/tenant2/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -646,14 +646,14 @@
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
       "rootUrl": "${authAdminUrl}",
-      "baseUrl": "/admin/branch2/console/",
+      "baseUrl": "/admin/tenant2/console/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "/admin/branch2/console/*"
+        "/admin/tenant2/console/*"
       ],
       "webOrigins": [
         "+"
