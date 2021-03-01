@@ -2,6 +2,6 @@
 .gradle/
 build/
 gradle/
-
+keycloak/hsperfdata_jboss/
 
 *.log

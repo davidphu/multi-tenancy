@@ -25,7 +25,7 @@ public class DataSourceProperties {
 
     private DataSource convert(Map<String, String> source) {
         return DataSourceBuilder.create()
-            .url(source.get("jdbcUrl"))
+            .url(source.get("url"))
             .driverClassName(source.get("driverClassName"))
             .username(source.get("username"))
             .password(source.get("password"))

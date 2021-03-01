@@ -1,5 +1,52 @@
 version: '3'
+
+volumes:
+  keycloak-data:
+    driver: local
+  keycloak-db:
+    driver: local
+  tenant1-db:
+    driver: local
+  tenant2-db:
+    driver: local
+
 services:
+  keyclock-db:
+    container_name: keyclock-db
+    image: mysql:8.0
+    ports:
+      - "3206:3306"
+    volumes:
+      - ./keycloak-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+  tenant1-db:
+    container_name: tenant1-db
+    image: mysql:8.0
+    ports:
+      - "3406:3306"
+    volumes:
+      - tenant1-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demo
+      MYSQL_USER: demo
+      MYSQL_PASSWORD: password
+  tenant2-db:
+    container_name: tenant2-db
+    image: mysql:8.0
+    ports:
+      - "3506:3306"
+    volumes:
+      - tenant2-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demo
+      MYSQL_USER: demo
+      MYSQL_PASSWORD: password
   app-idp:
     container_name: app-idp
     image: "jboss/keycloak:11.0.3"
@@ -9,11 +56,15 @@ services:
       - "8180:8080"
     volumes:
       - ./realms:/tmp/realms
-      - .:/tmp
+      - keycloak-data:/tmp
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
-      - DB_VENDOR=h2
+      - DB_VENDOR=MYSQL
+      - DB_ADDR=keyclock-db
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=password
       #- KEYCLOAK_IMPORT=/tmp/realms/main_realm.json
     command:
       - "-b 0.0.0.0"

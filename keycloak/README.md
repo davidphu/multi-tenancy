@@ -5,6 +5,16 @@ Spring Keycloak Multi Tenant Project
 > 127.0.0.1 external.auth.com my.auth.com
 
 ## Instructions
+* Create volumes for your docker containers
+> sudo mkdir /etc/docker
+> 
+> sudo mkdir /etc/docker/keyclock-db
+> 
+> sudo mkdir /etc/docker/tenant1-db
+> 
+> sudo mkdir /etc/docker/tenant2-db
+> 
+
 * Start your keycloak servers in docker containers:
 > docker-compose stop
 > 

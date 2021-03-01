@@ -178,10 +178,11 @@ public class SpringKeycloakSecurityConfiguration {
                 // manage routes securisation here
                 .and().authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
 
-                .antMatchers("/logout", "/", "/unsecured").permitAll() //
-                .antMatchers("/catalog").authenticated() //
-                .antMatchers("/users/self").authenticated() //
-                // .antMatchers("/**/catalog").hasRole("CATALOG_MANAGER") //
+                .antMatchers("/logout", "/", "/unsecured").permitAll()
+                .antMatchers("/catalog").authenticated()
+                .antMatchers("/catalog/*").authenticated()
+                .antMatchers("/users/self").authenticated()
+                // .antMatchers("/**/catalog").hasRole("CATALOG_MANAGER")
 
                 .anyRequest().denyAll()
                 .and()

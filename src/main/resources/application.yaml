@@ -9,8 +9,13 @@ logging:
         security: DEBUG
 
 spring:
+  application:
+    name: multi-tenant-demo-app
   jpa:
     open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      #ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: true
@@ -25,10 +30,14 @@ jwt:
 tenants:
   datasources:
     tenant1:
-      jdbcUrl: jdbc:mysql://localhost:3406/demo?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT
+#      driverClassName: com.mysql.jdbc.Driver
+#      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3406/demo?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT
       username: demo
-      password: demo
+      password: password
     tenant2:
-      jdbcUrl: jdbc:mysql://localhost:3506/demo?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT
+#      driverClassName: com.mysql.jdbc.Driver
+#      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3506/demo?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT
       username: demo
-      password: demo
+      password: password
