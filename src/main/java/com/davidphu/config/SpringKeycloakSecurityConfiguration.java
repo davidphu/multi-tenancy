@@ -5,6 +5,8 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.davidphu.tenant.TenantIdentificationFilter;
+import com.davidphu.util.JwtTokenUtil;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
@@ -20,6 +22,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,6 +31,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
@@ -78,7 +82,7 @@ public class SpringKeycloakSecurityConfiguration {
             return filter;
         }
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         @Bean
         public FilterRegistrationBean keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter filter) {
             FilterRegistrationBean registrationBean = new FilterRegistrationBean(filter);
@@ -86,7 +90,7 @@ public class SpringKeycloakSecurityConfiguration {
             return registrationBean;
         }
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         @Bean
         public FilterRegistrationBean keycloakPreAuthActionsFilterRegistrationBean(KeycloakPreAuthActionsFilter filter) {
             FilterRegistrationBean registrationBean = new FilterRegistrationBean(filter);
@@ -94,7 +98,7 @@ public class SpringKeycloakSecurityConfiguration {
             return registrationBean;
         }
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         @Bean
         public FilterRegistrationBean keycloakAuthenticatedActionsFilterBean(KeycloakAuthenticatedActionsFilter filter) {
             FilterRegistrationBean registrationBean = new FilterRegistrationBean(filter);
@@ -102,7 +106,7 @@ public class SpringKeycloakSecurityConfiguration {
             return registrationBean;
         }
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         @Bean
         public FilterRegistrationBean keycloakSecurityContextRequestFilterBean(KeycloakSecurityContextRequestFilter filter) {
             FilterRegistrationBean registrationBean = new FilterRegistrationBean(filter);
@@ -119,29 +123,29 @@ public class SpringKeycloakSecurityConfiguration {
 
         /**
          * Configuration spécifique à keycloak (ajouts de filtres, etc)
-         * 
+         *
          * @param http
          * @throws Exception
          */
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.sessionManagement()
-                    // use previously declared bean
-                    .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
+                // use previously declared bean
+                .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
 
-                    // keycloak filters for securisation
-                    .and().addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
-                    .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class).exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint())
+                // keycloak filters for securisation
+                .and().addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
+                .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class).exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint())
 
-                    // add cors options
-                    .and().cors()
-                    // delegate logout endpoint to spring security
+                // add cors options
+                .and().cors()
+                // delegate logout endpoint to spring security
 
-                    .and().logout().addLogoutHandler(keycloakLogoutHandler()).logoutUrl("/tenant/*/logout").logoutSuccessHandler(
-                            // logout handler for API
-                            (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> response.setStatus(HttpServletResponse.SC_OK))
-                    .and().apply(new SpringKeycloakSecurityAdapter());
+                .and().logout().addLogoutHandler(keycloakLogoutHandler()).logoutUrl("/tenant/*/logout").logoutSuccessHandler(
+                // logout handler for API
+                (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> response.setStatus(HttpServletResponse.SC_OK))
+                .and().apply(new SpringKeycloakSecurityAdapter());
 
         }
 
@@ -164,24 +168,33 @@ public class SpringKeycloakSecurityConfiguration {
             // any method that adds another configurer
             // must be done in the init method
             http
-                    // disable csrf because of API mode
-                    .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                // disable csrf because of API mode
+                .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-                    .and()
-                    // manage routes securisation here
-                    .authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
+                .and()
+                // manage routes securisation here
+                .authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
 
-                    // manage routes securisation here
-                    .and().authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
+                // manage routes securisation here
+                .and().authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
 
-                    .antMatchers("/logout", "/", "/unsecured").permitAll() //
-                    .antMatchers("/catalog").authenticated() //
-                    .antMatchers("/users/self").authenticated() //
-                    // .antMatchers("/**/catalog").hasRole("CATALOG_MANAGER") //
+                .antMatchers("/logout", "/", "/unsecured").permitAll() //
+                .antMatchers("/catalog").authenticated() //
+                .antMatchers("/users/self").authenticated() //
+                // .antMatchers("/**/catalog").hasRole("CATALOG_MANAGER") //
 
-                    .anyRequest().denyAll();
-
+                .anyRequest().denyAll()
+                .and()
+                .addFilterBefore(new TenantIdentificationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilter(new JWTAuthenticationFilter(jwtTokenUtil()))
+//                .addFilter(new JWTAuthorizationFilter(jwtTokenUtil()))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
 
+        @Bean
+        @ConditionalOnMissingBean(JwtTokenUtil.class)
+        public JwtTokenUtil jwtTokenUtil() {
+            return new JwtTokenUtil();
+        }
     }
 }

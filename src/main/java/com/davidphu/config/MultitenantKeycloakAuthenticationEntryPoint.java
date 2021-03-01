@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.davidphu.util.UriTenantResolver;
+import com.davidphu.util.UrlTenantResolver;
 import org.keycloak.adapters.AdapterDeploymentContext;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -25,14 +25,8 @@ public class MultitenantKeycloakAuthenticationEntryPoint extends KeycloakAuthent
     protected void commenceLoginRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String path = request.getRequestURL().toString();
         String tenantId = null;
-        try {
-            UriTenantResolver uriTenantResolver = new UriTenantResolver(path);
-            tenantId = uriTenantResolver.getTenantId();
-        }
-        catch (URISyntaxException ex) {
-            System.out.println("Invalid URI path: " + path);
-            ex.printStackTrace();
-        }
+        UrlTenantResolver urlTenantResolver = new UrlTenantResolver(path);
+        tenantId = urlTenantResolver.getTenantId();
 
         if (tenantId == null || tenantId.isBlank()) {
             throw new IllegalStateException("Not able to resolve tenant id from the request path!");

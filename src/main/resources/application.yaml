@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    org:
+      keycloak: DEBUG
+      springframework:
+        security: DEBUG
+
+spring:
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comment: true
+  datasource:
+    initialization-mode: never
+
+jwt:
+  secret: "D$R/6H])mWj~P[9$`CV;7;5{~%Wcxd"
+
+tenants:
+  datasources:
+    tenant1:
+      jdbcUrl: jdbc:mysql://localhost:3406/demo?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT
+      username: demo
+      password: demo
+    tenant2:
+      jdbcUrl: jdbc:mysql://localhost:3506/demo?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT
+      username: demo
+      password: demo

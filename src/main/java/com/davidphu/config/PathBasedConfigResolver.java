@@ -1,10 +1,11 @@
 package com.davidphu.config;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.davidphu.util.UriTenantResolver;
+import com.davidphu.util.UrlTenantResolver;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
@@ -23,10 +24,10 @@ public class PathBasedConfigResolver implements KeycloakConfigResolver {
         String path = request.getURI();
         String tenantId = null;
         try {
-            UriTenantResolver uriTenantResolver = new UriTenantResolver(path);
-            tenantId = uriTenantResolver.getTenantId();
+            UrlTenantResolver urlTenantResolver = new UrlTenantResolver(path);
+            tenantId = urlTenantResolver.getTenantId();
         }
-        catch (URISyntaxException ex) {
+        catch (MalformedURLException ex) {
             System.out.println("Invalid URI path: " + path);
             ex.printStackTrace();
         }
