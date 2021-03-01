@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class CatalogController {
@@ -20,7 +20,7 @@ public class CatalogController {
         this.catalogService = catalogService;
     }
 
-    @GetMapping(value = "/catalog")
+    @GetMapping(value = "/catalog", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CatalogEntity>> listCatalog() {
         List<CatalogEntity> all = catalogService.findAll();
         return ResponseEntity.ok()
@@ -28,7 +28,7 @@ public class CatalogController {
             .body(all);
     }
 
-    @GetMapping(value = "/catalog/{itemId}")
+    @GetMapping(value = "/catalog/{itemId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<CatalogEntity> viewItemById(@PathVariable Long itemId) {
         CatalogEntity item = catalogService.findById(itemId).orElse(null);
         return ResponseEntity.ok()

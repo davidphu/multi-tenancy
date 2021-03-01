@@ -1,8 +1,8 @@
 package com.davidphu.catalog.jpa;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
