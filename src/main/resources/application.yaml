@@ -1,20 +1,13 @@
 server:
   port: 8080
 
-logging:
-  level:
-    org:
-      keycloak: DEBUG
-      springframework:
-        security: DEBUG
-
 spring:
   application:
     name: multi-tenant-demo-app
   jpa:
-    open-in-view: false
+#    open-in-view: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    hibernate:
+#    hibernate:
       #ddl-auto: create-drop
     properties:
       hibernate:
@@ -41,3 +34,20 @@ tenants:
       url: jdbc:mysql://localhost:3506/demo?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=GMT
       username: demo
       password: password
+
+logging:
+  level:
+    org:
+      keycloak: DEBUG
+      springframework:
+        security: DEBUG
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: DEBUG
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
