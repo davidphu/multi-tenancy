@@ -16,14 +16,25 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtTokenUtil implements Serializable {
-
     private static final long serialVersionUID = -2550185165626007488L;
+    private static final long defaultValidTo = 86400;
+    private static final String defaultSecret = "D$R/6H])mWj~P[9$`CV;7;5{~%Wcxd";
 
     @Value("${jwt.token.valid-to:86400}") //24*60*60
-    private long JWT_TOKEN_VALIDITY;
+    private long tokenValidTo;
 
     @Value("${jwt.secret:D$R/6H])mWj~P[9$`CV;7;5{~%Wcxd}")
     private String secret;
+
+    public JwtTokenUtil(long tokenValidTo, String secret) {
+        this.tokenValidTo = tokenValidTo;
+        this.secret = secret;
+    }
+
+    public JwtTokenUtil() {
+        tokenValidTo = defaultValidTo;
+        secret = defaultSecret;
+    }
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -67,7 +78,7 @@ public class JwtTokenUtil implements Serializable {
             .setClaims(claims)
             .setSubject(subject)
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+            .setExpiration(new Date(System.currentTimeMillis() + tokenValidTo * 1000))
             .signWith(SignatureAlgorithm.HS512, secret)
             .compact();
     }

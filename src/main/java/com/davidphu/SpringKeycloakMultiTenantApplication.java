@@ -7,8 +7,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 import com.davidphu.config.PathBasedConfigResolver;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
 @SpringBootApplication
+@ComponentScan
 public class SpringKeycloakMultiTenantApplication {
 
     public static void main(String[] args) {

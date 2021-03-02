@@ -1,10 +1,5 @@
 package com.davidphu.config;
 
-import java.util.Arrays;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.davidphu.tenant.TenantIdentificationFilter;
 import com.davidphu.util.JwtTokenUtil;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -16,6 +11,7 @@ import org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter;
 import org.keycloak.adapters.springsecurity.filter.KeycloakSecurityContextRequestFilter;
 import org.keycloak.adapters.springsecurity.management.HttpSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -37,16 +33,34 @@ import org.springframework.security.web.authentication.preauth.x509.X509Authenti
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+
+@Component
 public class SpringKeycloakSecurityConfiguration {
 
     @DependsOn("keycloakConfigResolver")
     @KeycloakConfiguration
     @ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true", matchIfMissing = true)
     public static class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerAdapter {
+        @Value("${jwt.token.valid-to:86400}") //24*60*60
+        private long tokenValidTo;
+
+        @Value("${jwt.secret:D$R/6H])mWj~P[9$`CV;7;5{~%Wcxd}")
+        private String secret;
+
+        public class CustomKeycloakAuthenticationProcessingFilter extends KeycloakAuthenticationProcessingFilter {
+            public CustomKeycloakAuthenticationProcessingFilter(AuthenticationManager authenticationManager) {
+                super(authenticationManager, new AntPathRequestMatcher("/tenant/*/sso/login"));
+                setAuthenticationSuccessHandler(new KeycloakAuthenticationSuccessHandler(new JwtTokenUtil(tokenValidTo, secret)));
+            }
+        }
 
         /**
          * Registers the KeycloakAuthenticationProvider with the authentication manager.
@@ -77,7 +91,8 @@ public class SpringKeycloakSecurityConfiguration {
 
         @Override
         protected KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter() throws Exception {
-            KeycloakAuthenticationProcessingFilter filter = new KeycloakAuthenticationProcessingFilter(authenticationManager(), new AntPathRequestMatcher("/tenant/*/sso/login"));
+            //KeycloakAuthenticationProcessingFilter filter = new KeycloakAuthenticationProcessingFilter(authenticationManager(), new AntPathRequestMatcher("/tenant/*/sso/login"));
+            KeycloakAuthenticationProcessingFilter filter = new CustomKeycloakAuthenticationProcessingFilter(authenticationManager());
             filter.setSessionAuthenticationStrategy(sessionAuthenticationStrategy());
             return filter;
         }
@@ -187,15 +202,21 @@ public class SpringKeycloakSecurityConfiguration {
                 .anyRequest().denyAll()
                 .and()
                 .addFilterBefore(new TenantIdentificationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilter(new JWTAuthenticationFilter(jwtTokenUtil()))
+//                .addFilter(new JWTAuthenticationFilter(jwtTokenUtil()))
 //                .addFilter(new JWTAuthorizationFilter(jwtTokenUtil()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
-
-        @Bean
-        @ConditionalOnMissingBean(JwtTokenUtil.class)
-        public JwtTokenUtil jwtTokenUtil() {
-            return new JwtTokenUtil();
-        }
     }
+//
+//    @Bean
+//    public static AuthenticationSuccessHandler loginSuccessHandler() {
+//        return new SavedRequestAwareAuthenticationSuccessHandler() {
+//            @Override
+//            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+//                                                Authentication authentication) throws ServletException, IOException {
+//                super.onAuthenticationSuccess(request, response, authentication);
+//                return;
+//            }
+//        };
+//    }
 }
