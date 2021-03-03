@@ -207,6 +207,8 @@ public class SpringKeycloakSecurityConfiguration {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
     }
+
+
 //
 //    @Bean
 //    public static AuthenticationSuccessHandler loginSuccessHandler() {
