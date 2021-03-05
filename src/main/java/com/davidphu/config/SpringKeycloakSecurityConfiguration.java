@@ -1,6 +1,6 @@
 package com.davidphu.config;
 
-import com.davidphu.tenant.TenantIdentificationFilter;
+import com.davidphu.tenant.TenantIdentificationResolver;
 import com.davidphu.util.JwtTokenUtil;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
@@ -201,7 +201,7 @@ public class SpringKeycloakSecurityConfiguration {
 
                 .anyRequest().denyAll()
                 .and()
-                .addFilterBefore(new TenantIdentificationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new TenantIdentificationResolver(), UsernamePasswordAuthenticationFilter.class)
 //                .addFilter(new JWTAuthenticationFilter(jwtTokenUtil()))
 //                .addFilter(new JWTAuthorizationFilter(jwtTokenUtil()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -18,9 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-public class TenantIdentificationFilter extends OncePerRequestFilter {
+public class TenantIdentificationResolver extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(TenantIdentificationFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(TenantIdentificationResolver.class);
     private static final String AuthTokenTenantId = "tenant-id";
 
     @Override

@@ -29,7 +29,7 @@ services:
     ports:
       - "3406:3306"
     volumes:
-      - tenant1-db:/var/lib/mysql
+      - ./tenant1-db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: demo
@@ -41,7 +41,7 @@ services:
     ports:
       - "3506:3306"
     volumes:
-      - tenant2-db:/var/lib/mysql
+      - ./tenant2-db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: demo
@@ -56,7 +56,7 @@ services:
       - "8180:8080"
     volumes:
       - ./realms:/tmp/realms
-      - keycloak-data:/tmp
+      - ./keycloak-data:/tmp
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin

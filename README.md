@@ -3,22 +3,27 @@
 **Help me build more open-source projects by becoming my sponsor.*
 
 # Spring Keycloak Multi Tenant Project
-
-This project demonstrates multi-tenancy in Keycloak by overriding the class KeycloakConfigResolver to load the keycloak json configuration file depending on the realm specified in the path in each request. The realm is information is cache, so it's only loaded once per login.
-
+This project demonstrates multi-tenancy in a spring boot application connecting to Keycloak as an IdP for managing tenant data as separate realms.
 It uses a single Keycloak instance with multiple realms.
 
 ## Prerequisites
-
 - You must have prior knowledge with Spring and Keycloak.
-- You must have a project created in your Google console for testing.
 
 ## Instructions
-
-1. Create 2 projects in Google Console. Create credentials and Oauth screens for both.
-2. Import the realms inside the the keycloak-realms directory.
-3. Configure the Identity Provider inside Keycloak (Google).
-4. Set the idpHint (default identity provider for a realm) in Authentication / Identity Provider Redirector, click Actions / Config and set Alias=idpHint, Default Identity Provider=Google.
+- Set up docker resources: read the README.md under keycloak folder
+- Run keycloak and mysql servers: in keycloak folder, run ./run_dockers.sh
+- Set up demo database for each tenant
+    - connect each tenant's DB server
+    - create a database called 'demo'
+    - create a user with creds username = 'demo' and password = 'password' 
+    - Grant this user proper access rights to this database
+    - connect to this DB from a mysql client
+    - Run the DDL migration script under resources/db/migration
+    - Run the DML migration script under resources/db/migration/<tenant-X>
+- Start application
+    - tenant 1 service is available at 'tenant1.davidphu.com'. Log in with 'tenant1-user1' user
+    - tenant 2 service is available at 'tenant2.davidphu.com'. Log in with 'tenant2-user1' user
+    
 
 ## References
 

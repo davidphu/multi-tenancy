@@ -37,7 +37,8 @@ public class UserController {
             userTokenInfoBuilder.firstName(accessToken.getGivenName())
                 .lastName(accessToken.getFamilyName())
                 .emailAddress(accessToken.getEmail())
-                .tokenInfo(accessToken.getSubject());
+                .tokenInfo(accessToken.getSubject())
+                .tenantId(kPrincipal.getKeycloakSecurityContext().getRealm());
         }
 
         System.out.println("User token info: " + userTokenInfoBuilder.build().toString());

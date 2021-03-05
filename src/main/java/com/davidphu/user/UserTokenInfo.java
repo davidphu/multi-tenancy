@@ -10,4 +10,5 @@ public class UserTokenInfo {
     private String lastName;
     private String emailAddress;
     private String tokenInfo;
+    private String tenantId;
 }
